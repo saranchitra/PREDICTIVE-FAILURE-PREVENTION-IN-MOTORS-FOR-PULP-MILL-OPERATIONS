@@ -1,0 +1,50 @@
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
+const int tempPin = A0; // Temperature Sensor Pin
+const int vibrationPin = A1; // Vibration Sensor Pin
+const int currentPin = A2; // Current Sensor Pin
+const int voltagePin = A3; // Voltage Sensor Pin
+// Threshold values for each parameter
+const int tempThreshold = 600; 
+const int vibrationThreshold = 500; 
+const int currentThreshold = 150; 
+const int voltageThreshold = 440; 
+void setup() {
+ // Initialize LCD
+ lcd.begin(16, 2);
+ lcd.setCursor(0, 0);
+ lcd.print("Motor Monitor");
+ delay(2000);
+ lcd.clear(); }
+void loop() {
+ int tempValue = analogRead(tempPin);
+ int vibrationValue = analogRead(vibrationPin);
+35
+ int currentValue = analogRead(currentPin);
+ int voltageValue = analogRead(voltagePin);
+ bool faultDetected = false;
+ lcd.clear();
+ 
+ if (tempValue > tempThreshold) {
+ lcd.setCursor(0, 0);
+ lcd.print("Temp Fault!");
+ faultDetected = true; }
+ if (vibrationValue > vibrationThreshold) {
+ lcd.setCursor(0, 1);
+ lcd.print("Vibration Fault!");
+ faultDetected = true; }
+ if (currentValue > currentThreshold) {
+ if (!faultDetected) lcd.clear(); // Clear if displaying on a fresh line
+ lcd.setCursor(0, 0);
+ lcd.print("Current Fault!");
+ faultDetected = true; }
+ if (voltageValue > voltageThreshold) {
+ if (!faultDetected) lcd.clear(); 
+ lcd.setCursor(0, 1);
+ lcd.print("Voltage Fault!");
+ faultDetected = true; }
+ if (!faultDetected) {
+ lcd.setCursor(0, 0);
+ lcd.print("Status: All OK");
+ }
+ delay(500); }
